@@ -24,8 +24,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(flights.router, prefix="/flights")
-app.include_router(bookings.router, prefix="/bookings")
+app.include_router(flights.router)
+app.include_router(bookings.router)
 
 
 @app.get("/")

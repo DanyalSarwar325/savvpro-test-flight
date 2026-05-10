@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlightHub - My Bookings</title>
+  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">
+        <i class="fas fa-plane"></i> FlightHub
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Flights</a></li>
+        <li><a href="/search">Search</a></li>
+        <li><a href="/bookings" class="active">My Bookings</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h1><i class="fas fa-list"></i> My Bookings</h1>
+      <p>View and manage your flight bookings</p>
+    </div>
+
+    <div class="bookings-search">
+      <h3><i class="fas fa-filter"></i> Search Your Bookings</h3>
+      <form id="search-form" class="search-form">
+        <div class="form-group">
+          <label for="search-name">
+            <i class="fas fa-user"></i> Passenger Name
+          </label>
+          <input 
+            type="text" 
+            id="search-name" 
+            placeholder="Search by passenger name..."
+            class="form-input"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="search-ref">
+            <i class="fas fa-ticket-alt"></i> Booking Reference
+          </label>
+          <input 
+            type="text" 
+            id="search-ref" 
+            placeholder="e.g., FH-ABC123"
+            class="form-input"
+          >
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </form>
+    </div>
+
+    <div id="error" class="alert alert-error" style="display: none;"></div>
+    <div id="loading" class="loading" style="display: none;">
+      <i class="fas fa-spinner fa-spin"></i> Loading bookings...
+    </div>
+
+    <div id="bookings-container" class="bookings-list">
+      <!-- Bookings will be inserted here -->
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    const form = document.getElementById('search-form');
+    const bookingsContainer = document.getElementById('bookings-container');
+    const loadingDiv = document.getElementById('loading');
+    const errorDiv = document.getElementById('error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('search-name').value.trim();
+      const ref = document.getElementById('search-ref').value.trim();
+
+      if (!name && !ref) {
+        showError('Please enter a passenger name or booking reference');
+        return;
+      }
+
+      await searchBookings(name, ref);
+    });
+
+    async function searchBookings(name, ref) {
+      loadingDiv.style.display = 'block';
+      errorDiv.style.display = 'none';
+      bookingsContainer.innerHTML = '';
+
+      try {
+        const params = new URLSearchParams();
+        if (name) params.append('name', name);
+        if (ref) params.append('ref', ref);
+
+        const response = await fetch(`${API_BASE}/bookings?${params}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError(data.detail || 'No bookings found');
+          return;
+        }
+
+        displayBookings(data);
+      } catch (error) {
+        showError('Error searching bookings: ' + error.message);
+      } finally {
+        loadingDiv.style.display = 'none';
+      }
+    }
+
+    function displayBookings(bookings) {
+      if (!bookings || !Array.isArray(bookings) || bookings.length === 0) {
+        bookingsContainer.innerHTML = '<p class="empty-message">No bookings found</p>';
+        return;
+      }
+
+      bookingsContainer.innerHTML = bookings.map(booking => `
+        <div class="booking-card">
+          <div class="booking-header">
+            <div class="booking-ref">
+              <span class="label">Booking Reference</span>
+              <span class="value">${booking.booking_reference}</span>
+            </div>
+            <div class="booking-status ${booking.status}">
+              <i class="fas ${booking.status === 'confirmed' ? 'fa-check-circle' : 'fa-ban'}"></i>
+              ${booking.status.toUpperCase()}
+            </div>
+          </div>
+
+          <div class="booking-details">
+            <div class="detail-section">
+              <h4><i class="fas fa-plane"></i> Flight Details</h4>
+              <p><strong>Flight:</strong> ${booking.flight.flight_number}</p>
+              <p><strong>Route:</strong> ${booking.flight.origin} → ${booking.flight.destination}</p>
+              <p><strong>Departure:</strong> ${new Date(booking.flight.departure_time).toLocaleString()}</p>
+              <p><strong>Duration:</strong> ${booking.flight.duration_minutes} minutes</p>
+              <p><strong>Price:</strong> $${booking.flight.price.toFixed(2)}</p>
+            </div>
+
+            <div class="detail-section">
+              <h4><i class="fas fa-user-circle"></i> Passenger Details</h4>
+              <p><strong>Name:</strong> ${booking.passenger_name}</p>
+              <p><strong>Passport:</strong> ${booking.passport_number}</p>
+              <p><strong>Seat:</strong> ${booking.seat_number}</p>
+              <p><strong>Booked:</strong> ${new Date(booking.created_at).toLocaleString()}</p>
+            </div>
+          </div>
+
+          <div class="booking-footer">
+            ${booking.status === 'confirmed' 
+              ? `<button class="btn btn-danger" onclick="cancelBooking('${booking.booking_reference}')">
+                   <i class="fas fa-trash-alt"></i> Cancel Booking
+                 </button>`
+              : `<button class="btn btn-disabled">
+                   <i class="fas fa-check"></i> Cancelled
+                 </button>`
+            }
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function cancelBooking(reference) {
+      if (!confirm('Are you sure you want to cancel this booking?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/bookings/${reference}`, {
+          method: 'DELETE',
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError(data.detail || 'Failed to cancel booking');
+          return;
+        }
+
+        alert(`${data.message}`);
+        // Refresh bookings
+        const name = document.getElementById('search-name').value.trim();
+        const ref = document.getElementById('search-ref').value.trim();
+        if (name || ref) {
+          await searchBookings(name, ref);
+        }
+      } catch (error) {
+        showError('Error cancelling booking: ' + error.message);
+      }
+    }
+
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    // Make cancelBooking global
+    window.cancelBooking = cancelBooking;
+  </script>
+</body>
+</html>
