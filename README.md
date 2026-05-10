@@ -1,56 +1,88 @@
-# Step-by-Step Guide: How to Fork, Clone, and Submit Your Assessment
+# FlightHub
 
-Follow these instructions to participate in the test.
+FlightHub is a flight booking system with a FastAPI backend and an Express.js frontend.
 
-### 1. **Fork the Repository**
-1. Go to the repository: [https://github.com/savvpro/savvpro-test-flight](https://github.com/savvpro/savvpro-test-flight)
-2. In the top-right corner of the page, click the **Fork** button.
-3. This will create a copy of the repository in your GitHub account.
+## Assumptions
 
-### 2. **Clone Your Fork**
-1. After forking, go to your GitHub account and open your **forked repository**.
-2. Click on the green **Code** button and copy the URL.
-3. Open your terminal and run the following command to clone your fork:
+- You are running the project on Windows.
+- Python, Node.js, and `uv` are installed and available in your terminal.
+- The backend dependency file is located at the repository root as `requirements.txt`.
+- The frontend uses an Express server on port `3000`.
+- The backend uses FastAPI on port `8000`.
+
+## Setup Instructions
+
+### Backend
+
+1. Open a terminal in the project root.
+2. Create a virtual environment:
+
    ```bash
-   git clone https://github.com/your-username/savvpro-test-flight.git
+   uv venv
    ```
-4. Navigate into the cloned directory:
+
+3. Activate the virtual environment.
+
+   On PowerShell:
+
+   ```powershell
+   .venv\Scripts\Activate.ps1
+   ```
+
+   On Command Prompt:
+
+   ```cmd
+   .venv\Scripts\activate
+   ```
+
+4. Move into the backend folder:
+
    ```bash
-   cd savvpro-test-flight
+   cd backend
    ```
 
-### 3. **Read the Task**
-1. Open and read [`TASK.md`](https://github.com/savvpro/savvpro-test-flight/blob/main/TASK.md) carefully before writing any code.
+5. Install backend dependencies from the root requirements file:
 
-### 4. **Create a New Branch**
-1. Before making any changes, create a new branch using the following naming pattern:
-   ```
-   candidate-<your-github-username>
-   ```
-   Run:
    ```bash
-   git checkout -b candidate-<your-github-username>
+   uv add -r ..\requirements.txt
    ```
-   **Example:**
+
+6. Start the backend server:
+
    ```bash
-   git checkout -b candidate-johndoe
+   uvicorn backend.main:app --reload --port 8000
    ```
 
-### 5. **Complete the Task**
-Build the full application on your branch. 
+### Frontend
 
-### 6. **Push Your Branch**
-1. Commit your final changes:
+1. Open a new terminal in the project root.
+2. Move into the frontend folder:
+
    ```bash
-   git add .
-   git commit -m "feat: complete FlightHub assessment"
+   cd frontend
    ```
-2. Push your branch to your fork:
+
+3. Install frontend dependencies:
+
    ```bash
-   git push origin candidate-<your-github-username>
+   npm install
    ```
 
----
+4. Start the Express server:
 
-### **Important Notes**
-- **No submissions will be accepted after the deadline.**
+   ```bash
+   npm start
+   ```
+
+## How to Run the Project
+
+1. Start the backend first on `http://127.0.0.1:8000`.
+2. Start the frontend second on `http://localhost:3000`.
+3. Open `http://localhost:3000` in your browser.
+4. Use the Flights, Search, Book, and My Bookings pages from the UI.
+
+## Notes
+
+- The frontend proxies API requests to the backend.
+- If the page styling or API responses look stale, hard refresh the browser.
+- Seed data can be loaded separately if needed for testing.
