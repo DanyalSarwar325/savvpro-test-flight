@@ -157,6 +157,10 @@ A table with columns:
 4. Status updates to "Cancelled"
 5. Seats on the flight are released and become available again
 
+
+![cancel Flight](docs/images/cancel.png)
+
+**Figure 4:**   cancel Flights 
 ---
 
 ## Using the REST API (curl examples)
@@ -303,7 +307,7 @@ curl -X POST "http://127.0.0.1:8000/flights" \
 
 ![Book Flights](docs/images/booking.png)
 
-**Figure 2:**   Book Flight  
+**Figure 5:**   Book Flight  
 
 **Endpoint:** `POST /bookings`
 

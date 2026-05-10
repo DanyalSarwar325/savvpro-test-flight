@@ -95,3 +95,23 @@ FlightHub is a flight booking system with a FastAPI backend and an Express.js fr
 - If the page styling or API responses look stale, hard refresh the browser.
 - Run `python -m backend.seed` to populate the database with sample flight data before using the application.
 - Seed data can be loaded separately if needed for testing.
+
+## Tests
+
+The project includes API tests under `tests/` with an isolated in-memory SQLite database.
+
+1. Install dependencies (if not already installed):
+
+   ```bash
+   uv add -r requirements.txt
+   ```
+
+2. Run the test suite from the project root:
+
+   ```bash
+   pytest -q
+   ```
+
+Business rule coverage included:
+- Creating a booking decrements `seats_available`.
+- Cancelling a booking restores the seat count.
