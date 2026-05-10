@@ -117,9 +117,9 @@ Seat Number: ______________________
 - Example: `FH-A7C2E9`
 - Save this reference for future cancellations
 
-![Book Flight](docs/images/bookings.png)
+![Book Flight](docs/images/mybookings.png)
 
-**Figure 3:**   Search for Flights  
+**Figure 3:**   view Booked Flights  
 ---
 
 ### 4. View Your Bookings
