@@ -81,6 +81,9 @@ Ensure the application is running:
 - Shows: Flight Number, Departure Time, Duration, Price, Seats Available
 - Click "Book" to proceed to booking
 
+![Search Flights](docs/images/search.png)
+
+**Figure 2:**   Search for Flights  
 ---
 
 ### 3. Book a Flight
@@ -114,6 +117,9 @@ Seat Number: ______________________
 - Example: `FH-A7C2E9`
 - Save this reference for future cancellations
 
+![Book Flight](docs/images/bookings.png)
+
+**Figure 3:**   Search for Flights  
 ---
 
 ### 4. View Your Bookings
@@ -295,6 +301,10 @@ curl -X POST "http://127.0.0.1:8000/flights" \
 
 ### 4. Book a Flight
 
+![Book Flights](docs/images/booking.png)
+
+**Figure 2:**   Book Flight  
+
 **Endpoint:** `POST /bookings`
 
 **Request body:**
@@ -305,6 +315,8 @@ curl -X POST "http://127.0.0.1:8000/flights" \
   "passport_number": "AB123456",
   "seat_number": "12A"
 }
+
+
 ```
 
 **Curl command:**
