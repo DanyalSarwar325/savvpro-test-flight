@@ -47,7 +47,15 @@ FlightHub is a flight booking system with a FastAPI backend and an Express.js fr
    uv add -r ..\requirements.txt
    ```
 
-6. Start the backend server:
+6.  Seed the database with sample flights:
+
+   ```bash
+   python -m backend.seed
+   ```
+
+   This will populate the `flights` table with 12 sample flights if the database is empty.
+
+7. Start the backend server:
 
    ```bash
    uvicorn backend.main:app --reload --port 8000
@@ -85,4 +93,5 @@ FlightHub is a flight booking system with a FastAPI backend and an Express.js fr
 
 - The frontend proxies API requests to the backend.
 - If the page styling or API responses look stale, hard refresh the browser.
+- Run `python -m backend.seed` to populate the database with sample flight data before using the application.
 - Seed data can be loaded separately if needed for testing.
